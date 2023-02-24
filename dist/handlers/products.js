@@ -43,7 +43,7 @@ var products_1 = require("../models/products");
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var productRoutes = function (app) {
     app.get('/products', index);
-    app.get('/product/{:id}', show);
+    app.get('/product/:id', show);
     app.post('/product', create);
 };
 var store = new products_1.ProductStore();
@@ -72,14 +72,13 @@ var show = function (req, res) { return __awaiter(void 0, void 0, void 0, functi
     });
 }); };
 var create = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var auth, token, product, created;
+    var auth, product, created;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 try {
                     auth = req.headers.authorization;
-                    token = auth === null || auth === void 0 ? void 0 : auth.split(' ')[1];
-                    jsonwebtoken_1["default"].verify(token, process.env.TOKEN_SECRET);
+                    jsonwebtoken_1["default"].verify(auth, process.env.TOKEN_SECRET);
                 }
                 catch (err) {
                     res.status(401);

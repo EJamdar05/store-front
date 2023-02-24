@@ -3,7 +3,7 @@ import { User, UserStore } from '../models/users';
 import jwt from 'jsonwebtoken';
 const userRoutes = (app: express.Application) => {
     app.get('/users', index);
-    app.get('/users/{:id}', show);
+    app.get('/users/:id', show);
     app.post('/users', create);
     app.delete('/users', destroy);
     app.post('/users/authenticate', authenticate);
@@ -14,8 +14,7 @@ const store = new UserStore();
 const index = async (req: Request, res: Response) => {
     try {
         const auth = req.headers.authorization;
-        const token = auth?.split(' ')[1];
-        jwt.verify(token as string, process.env.TOKEN_SECRET as string);
+        jwt.verify(auth as string, process.env.TOKEN_SECRET as string);
     } catch (err) {
         res.status(401);
         res.json('Access denied, invalid token');
@@ -37,6 +36,7 @@ const create = async (req: Request, res: Response) => {
         username: req.body.username,
         password_digest: req.body.password,
     };
+    console.log(req.body);
     try {
         const newUser = await store.create(user);
         const token = jwt.sign(

@@ -24,8 +24,6 @@ describe('User model tests', () => {
 
     it('create method should create a product', async () => {
         const testProduct: Order = {
-            product_id: 1,
-            quantity: 2,
             user_id: 3,
             order_status: 'ACTIVE',
         };

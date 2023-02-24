@@ -2,11 +2,16 @@ import Client from '../database';
 
 export type Order = {
     id?: string;
-    product_id: number;
-    quantity: number;
     user_id: number;
     order_status: string;
 };
+
+export type OrderProd = {
+    id?: string,
+    order_id: number,
+    product_id: number,
+    quantity: number
+}
 
 export class OrderStore {
     async index(): Promise<Order[]> {
@@ -35,11 +40,9 @@ export class OrderStore {
     async create(order: Order): Promise<Order> {
         try {
             const sql =
-                'INSERT INTO orders (product_id, quantity, user_id, order_status) VALUES($1, $2, $3, $4) RETURNING *';
+                'INSERT INTO orders (user_id, order_status) VALUES($1, $2) RETURNING *';
             const conn = await Client.connect();
             await conn.query(sql, [
-                order.product_id,
-                order.quantity,
                 order.user_id,
                 order.order_status,
             ]);
@@ -71,7 +74,23 @@ export class OrderStore {
             conn.release();
             return result.rows;
         } catch (err) {
-            throw new Error(`Could not retrive for user id#${uid}: ${err}`);
+            throw new Error(`Could not retrive order(s) for user id#${uid}: ${err}`);
+        }
+    }
+
+    async createProduct (pOrder: OrderProd): Promise<Order>{
+        try{
+            const sql = 'INSERT INTO order_prod (order_id, product_id, quantity) VALUES ($1, $2, $3) RETURNING *';
+            const conn = await Client.connect();
+            const result = await Client.query(sql, [
+                pOrder.order_id,
+                pOrder.product_id,
+                pOrder.quantity
+            ])
+            conn.release();
+            return result.rows[0];
+        }catch(err){
+            throw new Error(`Cannot add product to order ${pOrder.order_id}: ${err}`)
         }
     }
 }

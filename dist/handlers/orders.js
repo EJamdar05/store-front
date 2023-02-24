@@ -42,22 +42,22 @@ exports.__esModule = true;
 var orders_1 = require("../models/orders");
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var orderRoutes = function (app) {
-    app.get('/orders/{:id}', orders);
+    app.get('/orders/:id', orders);
     app.get('/orders', index);
     app.post('/orders', create);
     app["delete"]('/orders/{:id}', destroy);
     app.post('/orders/currentOrder', current);
+    app.post('/orders/:id/products', addItem);
 };
 var store = new orders_1.OrderStore();
 var orders = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var auth, token, orders;
+    var auth, orders;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 try {
                     auth = req.headers.authorization;
-                    token = auth === null || auth === void 0 ? void 0 : auth.split(' ')[1];
-                    jsonwebtoken_1["default"].verify(token, process.env.TOKEN_SECRET);
+                    jsonwebtoken_1["default"].verify(auth, process.env.TOKEN_SECRET);
                 }
                 catch (err) {
                     res.status(401);
@@ -90,8 +90,6 @@ var create = function (req, res) { return __awaiter(void 0, void 0, void 0, func
         switch (_a.label) {
             case 0:
                 order = {
-                    product_id: req.body.id,
-                    quantity: req.body.quantity,
                     user_id: req.body.uid,
                     order_status: req.body.ostat
                 };
@@ -116,15 +114,15 @@ var destroy = function (req, res) { return __awaiter(void 0, void 0, void 0, fun
     });
 }); };
 var current = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var auth, token, orders;
+    var auth, orders;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
+                console.log('accessed');
                 try {
                     auth = req.headers.authorization;
-                    token = auth === null || auth === void 0 ? void 0 : auth.split(' ')[1];
-                    jsonwebtoken_1["default"].verify(token, process.env.TOKEN_SECRET);
+                    jsonwebtoken_1["default"].verify(auth, process.env.TOKEN_SECRET);
                 }
                 catch (err) {
                     (_a = res.status) !== null && _a !== void 0 ? _a : 401;
@@ -134,6 +132,32 @@ var current = function (req, res) { return __awaiter(void 0, void 0, void 0, fun
             case 1:
                 orders = _b.sent();
                 res.json(orders);
+                return [2 /*return*/];
+        }
+    });
+}); };
+var addItem = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var auth, item, add;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                try {
+                    auth = req.headers.authorization;
+                    jsonwebtoken_1["default"].verify(auth, process.env.TOKEN_SECRET);
+                }
+                catch (err) {
+                    res.status(401);
+                    res.json('Access is denied. Token invalid');
+                }
+                item = {
+                    order_id: req.body.oid,
+                    product_id: req.body.pid,
+                    quantity: req.body.quant
+                };
+                return [4 /*yield*/, store.createProduct(item)];
+            case 1:
+                add = _a.sent();
+                res.json(add);
                 return [2 /*return*/];
         }
     });

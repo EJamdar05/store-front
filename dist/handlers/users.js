@@ -43,21 +43,20 @@ var users_1 = require("../models/users");
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var userRoutes = function (app) {
     app.get('/users', index);
-    app.get('/users/{:id}', show);
+    app.get('/users/:id', show);
     app.post('/users', create);
     app["delete"]('/users', destroy);
     app.post('/users/authenticate', authenticate);
 };
 var store = new users_1.UserStore();
 var index = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var auth, token, users;
+    var auth, users;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 try {
                     auth = req.headers.authorization;
-                    token = auth === null || auth === void 0 ? void 0 : auth.split(' ')[1];
-                    jsonwebtoken_1["default"].verify(token, process.env.TOKEN_SECRET);
+                    jsonwebtoken_1["default"].verify(auth, process.env.TOKEN_SECRET);
                 }
                 catch (err) {
                     res.status(401);
@@ -95,6 +94,7 @@ var create = function (req, res) { return __awaiter(void 0, void 0, void 0, func
                     username: req.body.username,
                     password_digest: req.body.password
                 };
+                console.log(req.body);
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 3, , 4]);

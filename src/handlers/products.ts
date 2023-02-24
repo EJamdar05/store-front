@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 
 const productRoutes = (app: express.Application) => {
     app.get('/products', index);
-    app.get('/product/{:id}', show);
+    app.get('/product/:id', show);
     app.post('/product', create);
 };
 
@@ -23,8 +23,7 @@ const show = async (req: Request, res: Response) => {
 const create = async (req: Request, res: Response) => {
     try {
         const auth = req.headers.authorization;
-        const token = auth?.split(' ')[1];
-        jwt.verify(token as string, process.env.TOKEN_SECRET as string);
+        jwt.verify(auth as string, process.env.TOKEN_SECRET as string);
     } catch (err) {
         res.status(401);
         res.json('Access denied, invalid token');

@@ -99,13 +99,11 @@ var OrderStore = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
-                        sql = 'INSERT INTO orders (product_id, quantity, user_id, order_status) VALUES($1, $2, $3, $4) RETURNING *';
+                        sql = 'INSERT INTO orders (user_id, order_status) VALUES($1, $2) RETURNING *';
                         return [4 /*yield*/, database_1["default"].connect()];
                     case 1:
                         conn = _a.sent();
                         return [4 /*yield*/, conn.query(sql, [
-                                order.product_id,
-                                order.quantity,
                                 order.user_id,
                                 order.order_status,
                             ])];
@@ -163,7 +161,35 @@ var OrderStore = /** @class */ (function () {
                         return [2 /*return*/, result.rows];
                     case 3:
                         err_5 = _a.sent();
-                        throw new Error("Could not retrive for user id#".concat(uid, ": ").concat(err_5));
+                        throw new Error("Could not retrive order(s) for user id#".concat(uid, ": ").concat(err_5));
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    OrderStore.prototype.createProduct = function (pOrder) {
+        return __awaiter(this, void 0, void 0, function () {
+            var sql, conn, result, err_6;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        sql = 'INSERT INTO order_prod (order_id, product_id, quantity) VALUES ($1, $2, $3) RETURNING *';
+                        return [4 /*yield*/, database_1["default"].connect()];
+                    case 1:
+                        conn = _a.sent();
+                        return [4 /*yield*/, database_1["default"].query(sql, [
+                                pOrder.order_id,
+                                pOrder.product_id,
+                                pOrder.quantity
+                            ])];
+                    case 2:
+                        result = _a.sent();
+                        conn.release();
+                        return [2 /*return*/, result.rows[0]];
+                    case 3:
+                        err_6 = _a.sent();
+                        throw new Error("Cannot add product to order ".concat(pOrder.order_id, ": ").concat(err_6));
                     case 4: return [2 /*return*/];
                 }
             });
