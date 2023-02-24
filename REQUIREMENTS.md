@@ -49,5 +49,6 @@ Orders will keep track of orders associated with particular user and if the orde
 | id (SERIAL PRIMARY KEY) | order_id (REFERENCES users(id)) | product_id (REFERENCES product(id) | quantity (integer) |
 |-------------------------|---------------------------------|------------------------------------|--------------------|
 | 1                       | 1                               | 1                                  | 1                  |
+
 In this table, a person's ordered products can be queried. A order id refferences the customer id of who ordered the product, product id looks up a product in the product table and quantity ordered shows how much the user ordered. This seperate order table allows for quicker queries and allows for many to many relations. 
 
