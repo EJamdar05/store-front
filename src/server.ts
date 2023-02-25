@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import userRoutes from './handlers/users';
 import productRoutes from './handlers/products';
 import orderRoutes from './handlers/orders';
+import orderProductsRoutes from './handlers/order_prod';
 
 const app: express.Application = express();
 const address = '0.0.0.0:3000';
@@ -20,3 +21,6 @@ app.listen(3000, function () {
 userRoutes(app);
 productRoutes(app);
 orderRoutes(app);
+orderProductsRoutes(app);
+
+export default app;

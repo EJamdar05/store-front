@@ -16,3 +16,21 @@ To run the server, simply run
 yarn watch
 ```
 This will run on port 3000. To access on a browser, simply input localhost:3000 to confirm the server is running.
+
+## Setup
+Make sure to have PostgreSQL installed on your computer and create the following databases
+* storefront_dev 
+* storefront_test 
+```
+(CREATE DATABASE storefront_dev)
+(CREATE DATABASE storefront_test)
+```
+
+Make sure to grant all privleges to the user for both test and dev 
+```
+GRANT ALL PRIVILEGES ON DATABASE storefront_dev TO someuser
+```
+
+In order to create the tables, use db-migrate up to automatically add the tables without having to do so manually.
+
+NOTE: The port for Postgre is the default 5432

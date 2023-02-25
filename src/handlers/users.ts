@@ -1,11 +1,12 @@
 import express, { Request, Response } from 'express';
 import { User, UserStore } from '../models/users';
 import jwt from 'jsonwebtoken';
+import auth from '../middleware/auth';
 const userRoutes = (app: express.Application) => {
-    app.get('/users', index);
-    app.get('/users/:id', show);
+    app.get('/users', auth, index);
+    app.get('/users/:id', auth, show);
     app.post('/users', create);
-    app.delete('/users', destroy);
+    app.delete('/users', auth, destroy);
     app.post('/users/authenticate', authenticate);
 };
 
@@ -13,20 +14,22 @@ const store = new UserStore();
 
 const index = async (req: Request, res: Response) => {
     try {
-        const auth = req.headers.authorization;
-        jwt.verify(auth as string, process.env.TOKEN_SECRET as string);
+        const users = await store.index();
+        res.json(users);
     } catch (err) {
-        res.status(401);
-        res.json('Access denied, invalid token');
-        return;
+        res.status(400);
+        res.json(err);
     }
-    const users = await store.index();
-    res.json(users);
 };
 
 const show = async (req: Request, res: Response) => {
-    const user = await store.show(req.body.id);
-    res.json(user);
+    try {
+        const user = await store.show(req.body.id);
+        res.json(user);
+    } catch (err) {
+        res.status(400);
+        res.json(err);
+    }
 };
 
 const create = async (req: Request, res: Response) => {
@@ -36,7 +39,6 @@ const create = async (req: Request, res: Response) => {
         username: req.body.username,
         password_digest: req.body.password,
     };
-    console.log(req.body);
     try {
         const newUser = await store.create(user);
         const token = jwt.sign(
@@ -51,8 +53,13 @@ const create = async (req: Request, res: Response) => {
 };
 
 const destroy = async (req: Request, res: Response) => {
-    const deleteUser = await store.delete(req.body.id);
-    res.json(deleteUser);
+    try {
+        const deleteUser = await store.delete(req.body.id);
+        res.json(deleteUser);
+    } catch (err) {
+        res.status(400);
+        res.json(err);
+    }
 };
 
 const authenticate = async (req: Request, res: Response) => {

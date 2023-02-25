@@ -3,14 +3,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const products_1 = require("../models/products");
+const order_prod_1 = require("../models/order_prod");
 const auth_1 = __importDefault(require("../middleware/auth"));
-const productRoutes = (app) => {
-    app.get('/products', index);
-    app.get('/product/:id', show);
-    app.post('/product', auth_1.default, create);
+const orderProductsRoutes = (app) => {
+    app.get('/orderprod', index);
+    app.get('/orderprod/:id', show);
+    app.post('/orderprod', auth_1.default, create);
 };
-const store = new products_1.ProductStore();
+const store = new order_prod_1.orderProdStore();
 const index = async (req, res) => {
     try {
         const products = await store.index();
@@ -33,17 +33,17 @@ const show = async (req, res) => {
 };
 const create = async (req, res) => {
     try {
-        const product = {
-            prod_name: req.body.name,
-            price: req.body.price,
+        const item = {
+            order_id: req.body.oid,
+            product_id: req.body.pid,
+            quantity: req.body.quant,
         };
-        const created = await store.create(product);
-        res.status(200);
-        res.json(created);
+        const add = await store.create(item);
+        res.json(add);
     }
-    catch (error) {
+    catch (err) {
         res.status(400);
-        res.json(error);
+        res.json(err);
     }
 };
-exports.default = productRoutes;
+exports.default = orderProductsRoutes;

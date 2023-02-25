@@ -1,13 +1,13 @@
 import express, { Request, Response } from 'express';
-import { Product, ProductStore } from '../models/products';
+import { OrderProd, orderProdStore } from '../models/order_prod';
 import auth from '../middleware/auth';
-const productRoutes = (app: express.Application) => {
-    app.get('/products', index);
-    app.get('/product/:id', show);
-    app.post('/product', auth, create);
+const orderProductsRoutes = (app: express.Application) => {
+    app.get('/orderprod', index);
+    app.get('/orderprod/:id', show);
+    app.post('/orderprod', auth, create);
 };
 
-const store = new ProductStore();
+const store = new orderProdStore();
 
 const index = async (req: Request, res: Response) => {
     try {
@@ -31,17 +31,17 @@ const show = async (req: Request, res: Response) => {
 
 const create = async (req: Request, res: Response) => {
     try {
-        const product: Product = {
-            prod_name: req.body.name,
-            price: req.body.price as number,
+        const item: OrderProd = {
+            order_id: req.body.oid,
+            product_id: req.body.pid,
+            quantity: req.body.quant,
         };
-        const created = await store.create(product);
-        res.status(200);
-        res.json(created);
-    } catch (error) {
+        const add = await store.create(item);
+        res.json(add);
+    } catch (err) {
         res.status(400);
-        res.json(error);
+        res.json(err);
     }
 };
 
-export default productRoutes;
+export default orderProductsRoutes;

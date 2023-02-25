@@ -7,11 +7,11 @@ export type Order = {
 };
 
 export type OrderProd = {
-    id?: string,
-    order_id: number,
-    product_id: number,
-    quantity: number
-}
+    id?: string;
+    order_id: number;
+    product_id: number;
+    quantity: number;
+};
 
 export class OrderStore {
     async index(): Promise<Order[]> {
@@ -42,10 +42,7 @@ export class OrderStore {
             const sql =
                 'INSERT INTO orders (user_id, order_status) VALUES($1, $2) RETURNING *';
             const conn = await Client.connect();
-            await conn.query(sql, [
-                order.user_id,
-                order.order_status,
-            ]);
+            await conn.query(sql, [order.user_id, order.order_status]);
             conn.release();
             return order;
         } catch (err) {
@@ -74,23 +71,28 @@ export class OrderStore {
             conn.release();
             return result.rows;
         } catch (err) {
-            throw new Error(`Could not retrive order(s) for user id#${uid}: ${err}`);
+            throw new Error(
+                `Could not retrive order(s) for user id#${uid}: ${err}`,
+            );
         }
     }
 
-    async createProduct (pOrder: OrderProd): Promise<Order>{
-        try{
-            const sql = 'INSERT INTO order_prod (order_id, product_id, quantity) VALUES ($1, $2, $3) RETURNING *';
+    async createProduct(pOrder: OrderProd): Promise<Order> {
+        try {
+            const sql =
+                'INSERT INTO order_prod (order_id, product_id, quantity) VALUES ($1, $2, $3) RETURNING *';
             const conn = await Client.connect();
             const result = await Client.query(sql, [
                 pOrder.order_id,
                 pOrder.product_id,
-                pOrder.quantity
-            ])
+                pOrder.quantity,
+            ]);
             conn.release();
             return result.rows[0];
-        }catch(err){
-            throw new Error(`Cannot add product to order ${pOrder.order_id}: ${err}`)
+        } catch (err) {
+            throw new Error(
+                `Cannot add product to order ${pOrder.order_id}: ${err}`,
+            );
         }
     }
 }
